@@ -12,7 +12,7 @@ public class Solution {
     public static void main(String[] args) {
         //исправьте outputStream/inputStream в соответствии с путем к вашему реальному файлу
         try {
-            File your_file_name = File.createTempFile("your_file_name", null);
+            File your_file_name = File.createTempFile("c:\\\\5.txt", null);
             OutputStream outputStream = new FileOutputStream(your_file_name);
             InputStream inputStream = new FileInputStream(your_file_name);
 
@@ -24,6 +24,9 @@ public class Solution {
             somePerson.load(inputStream);
             inputStream.close();
             //check here that ivanov equals to somePerson - проверьте тут, что ivanov и somePerson равны
+
+            if (ivanov.equals(somePerson)) System.out.println("Yes");
+            else System.out.println("No");
 
         } catch (IOException e) {
             //e.printStackTrace();
@@ -68,30 +71,34 @@ public class Solution {
 
         public void save(OutputStream outputStream) throws Exception {
             //implement this method - реализуйте этот метод
-            PrintWriter printWriter = new PrintWriter(outputStream);
-            printWriter.println(name);
-            int result = assets.size();
-            if (result > 0) {
-                for (Asset a : assets) {
-                    printWriter.println(a.getName());
-                    printWriter.println(a.getPrice());
+            String activ = "";
+            int isActiv = this.assets !=null? this.assets.size(): 0;
+            if(this.assets!=null) {
+                for(int i = 0; i <this.assets.size();i++){
+                    activ += this.assets.get(i).getName()+" "+this.assets.get(i).getPrice()+" ";
                 }
             }
-            printWriter.flush();
+            String full = isActiv + " " + this.name + " " + activ;
+
+
+            byte[] b = full.getBytes();
+            outputStream.write(b);
         }
 
         public void load(InputStream inputStream) throws Exception {
             //implement this method - реализуйте этот метод
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            name = bufferedReader.readLine();
-            String strName = "";
-            double dblPrice = 0;
-            while (bufferedReader.ready()) {
-                strName  = bufferedReader.readLine();
-                dblPrice = Double.parseDouble(bufferedReader.readLine());
-                Asset asset = new Asset(strName, dblPrice);
-                assets.add(asset);
+            String byff = bufferedReader.readLine();
+            String[] inf = byff.split(" ");
+            if(Integer.parseInt(inf[0]) != 0) {
+                this.name = inf[1];
+                for(int i = 0,j=2;i<Integer.parseInt(inf[0]);i++,j+=2) {
+                    this.assets.add(new Asset(inf[j],Double.parseDouble(inf[j+1])));
+                }
+            } else {
+                this.name = inf[1];
             }
+            bufferedReader.close();
         }
     }
 }
